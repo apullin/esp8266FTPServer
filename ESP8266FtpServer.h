@@ -32,6 +32,7 @@
 #define FTP_SERVERESP_H
 
 //#include "Streaming.h"
+#define FS_NO_GLOBALS
 #include <FS.h>
 #include <WiFiClient.h>
 
@@ -75,7 +76,7 @@ private:
   WiFiClient client;
   WiFiClient data;
   
-  File file;
+  fs::File file;
   
   boolean  dataPassiveConn;
   uint16_t dataPort;

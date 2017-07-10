@@ -375,7 +375,7 @@ boolean FtpServer::processCommand()
     {
       client.println( "150 Accepted data connection");
       uint16_t nm = 0;
-      Dir dir=SPIFFS.openDir(cwdName);
+      fs::Dir dir=SPIFFS.openDir(cwdName);
       if( !SPIFFS.exists(cwdName))
         client.println( "550 Can't open directory " + String(cwdName) );
       else
@@ -406,7 +406,7 @@ boolean FtpServer::processCommand()
     {
 	  client.println( "150 Accepted data connection");
       uint16_t nm = 0;
-      Dir dir= SPIFFS.openDir(cwdName);
+      fs::Dir dir= SPIFFS.openDir(cwdName);
       char dtStr[ 15 ];
     //  if(!SPIFFS.exists(cwdName))
     //    client.println( "550 Can't open directory " +String(parameters)+ );
@@ -438,7 +438,7 @@ boolean FtpServer::processCommand()
     {
       client.println( "150 Accepted data connection");
       uint16_t nm = 0;
-      Dir dir=SPIFFS.openDir(cwdName);
+      fs::Dir dir=SPIFFS.openDir(cwdName);
       if( !SPIFFS.exists( cwdName ))
         client.println( "550 Can't open directory " + String(parameters));
       else
