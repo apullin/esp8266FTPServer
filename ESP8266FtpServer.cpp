@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define FS_NO_GLOBALS
 #include <FS.h>
 #include "ESP8266FtpServer.h"
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <FS.h>
 
 
 WiFiServer ftpServer( FTP_CTRL_PORT );
@@ -230,8 +230,9 @@ boolean FtpServer::processCommand()
   //
   //  PWD - Print Directory
   //
-  else if( ! strcmp( command, "PWD" ))
+  else if( ! strcmp( command, "PWD" )){
     client.println( "257 \"" + String(cwdName) + "\" is your current directory");
+  }
   //
   //  QUIT
   //
@@ -370,28 +371,57 @@ boolean FtpServer::processCommand()
   //
   else if( ! strcmp( command, "LIST" ))
   {
-    if( ! dataConnect())
+    Serial.println("LIST");
+    if( ! dataConnect()){
       client.println( "425 No data connection");
+    }
     else
     {
       client.println( "150 Accepted data connection");
       uint16_t nm = 0;
-      fs::Dir dir=SPIFFS.openDir(cwdName);
-      if( !SPIFFS.exists(cwdName))
+      File dir = SD.open("/");
+      //Dir dir=SPIFFS.openDir(cwdName);
+      //if( !SPIFFS.exists(cwdName)){
+      //  client.println( "550 Can't open directory " + String(cwdName) );
+      if(!SD.exists(cwdName)){
         client.println( "550 Can't open directory " + String(cwdName) );
+      }
       else
       {
-        while( dir.next())
+        //Loop over all existing files
+        while (true)
         {
-			String fn, fs;
-			fn = dir.fileName();
-			fn.remove(0, 1);
-			fs = String(dir.fileSize());
-            data.println( "+r,s" + fs);
-            data.println( ",\t" + fn );
+          String fn, fs;
+          File entry = dir.openNextFile();
+          if (!entry)
+          {
+            // no more files
+            //Serial.println("**nomorefiles**");
+            break;
+          }
+
+          fn = entry.name();
+          fn.remove(0, 1);
+          fs = String(entry.size());
+          entry.close();
+
+          data.println( "+r,s" + fs);
+          data.println( ",\t" + fn );
           nm ++;
         }
+
+        // while( dir.next())
+        // {
+        //     String fn, fs;
+        //     fn = dir.fileName();
+        //     fn.remove(0, 1);
+        //     fs = String(dir.fileSize());
+        //     data.println( "+r,s" + fs);
+        //     data.println( ",\t" + fn );
+        //   nm ++;
+        // }
         client.println( "226 " + String(nm) + " matches total");
+        Serial.println( "226 " + String(nm) + " matches total");
       }
       data.stop();
     }
@@ -401,27 +431,50 @@ boolean FtpServer::processCommand()
   //
   else if( ! strcmp( command, "MLSD" ))
   {
-    if( ! dataConnect())
+    Serial.println("MLSD");
+    if( ! dataConnect()){
       client.println( "425 No data connection MLSD");
+    }
     else
     {
 	  client.println( "150 Accepted data connection");
       uint16_t nm = 0;
-      fs::Dir dir= SPIFFS.openDir(cwdName);
-      char dtStr[ 15 ];
+      //fs::Dir dir= SPIFFS.openDir(cwdName);
+      //char dtStr[ 15 ];
     //  if(!SPIFFS.exists(cwdName))
     //    client.println( "550 Can't open directory " +String(parameters)+ );
     //  else
       {
-        while( dir.next())
-		{
-			String fn,fs;
-			fn = dir.fileName();
-			fn.remove(0, 1);
-			fs = String(dir.fileSize());
-          data.println( "Type=file;Size=" + fs + ";"+"modify=20000101160656;" +" " + fn);
+        File dir = SD.open("/");
+        //Loop over all existing files
+        while (true)
+        {
+          String fn, fs;
+          File entry = dir.openNextFile();
+          if (!entry)
+          {
+            // no more files
+            break;
+          }
+
+          fn = entry.name();
+          //fn.remove(0, 1);
+          fs = String(entry.size());
+          entry.close();
+
+          data.println("Type=file;Size=" + fs + ";" + "modify=20000101160656;" + " " + fn);
+          Serial.println("Type=file;Size=" + fs + ";" + "modify=20000101160656;" + " " + fn);
           nm ++;
         }
+        // while (dir.next())
+        // {
+        //   String fn, fs;
+        //   fn = dir.fileName();
+        //   fn.remove(0, 1);
+        //   fs = String(dir.fileSize());
+        //   data.println("Type=file;Size=" + fs + ";" + "modify=20000101160656;" + " " + fn);
+        //   nm++;
+        // }
         client.println( "226-options: -a -l");
         client.println( "226 " + String(nm) + " matches total");
       }

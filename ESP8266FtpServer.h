@@ -26,7 +26,7 @@
  *******************************************************************************/
 
 // Uncomment to print debugging info to console attached to ESP8266
-//#define FTP_DEBUG
+#define FTP_DEBUG
 
 #ifndef FTP_SERVERESP_H
 #define FTP_SERVERESP_H
@@ -35,6 +35,7 @@
 #define FS_NO_GLOBALS
 #include <FS.h>
 #include <WiFiClient.h>
+#include <SD.h>
 
 #define FTP_SERVER_VERSION "FTP-2016-01-14"
 
