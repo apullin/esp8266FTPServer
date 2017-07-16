@@ -48,9 +48,13 @@
 #define FTP_FIL_SIZE 255     // max size of a file name
 #define FTP_BUF_SIZE 2*1460 //512   // size of file buffer for read/write
 
+typedef enum { SPIFFS_STORAGE, SDCARD_STORAGE } esp8266ftpserver_storage_t;
+
 class FtpServer
 {
 public:
+          FtpServer(esp8266ftpserver_storage_t storage) : storage(storage) {};
+          FtpServer() : storage(SPIFFS_STORAGE) {};
   void    begin(String uname, String pword);
   void    handleFTP();
 
@@ -78,6 +82,7 @@ private:
   WiFiClient data;
   
   fs::File file;
+  esp8266ftpserver_storage_t storage; //storage source type
   
   boolean  dataPassiveConn;
   uint16_t dataPort;

@@ -900,18 +900,22 @@ boolean FtpServer::makePath( char * fullName, char * param )
   if( param[0] != '/' ) 
   {
     strcpy( fullName, cwdName );
-    if( fullName[ strlen( fullName ) - 1 ] != '/' )
+    if( fullName[ strlen( fullName ) - 1 ] != '/' ){
       strncat( fullName, "/", FTP_CWD_SIZE );
+    }
     strncat( fullName, param, FTP_CWD_SIZE );
   }
-  else
+  else{
     strcpy( fullName, param );
+  }
   // If ends with '/', remove it
   uint16_t strl = strlen( fullName ) - 1;
-  if( fullName[ strl ] == '/' && strl > 1 )
+  if( fullName[ strl ] == '/' && strl > 1 ){
     fullName[ strl ] = 0;
-  if( strlen( fullName ) < FTP_CWD_SIZE )
+  }
+  if( strlen( fullName ) < FTP_CWD_SIZE ){
     return true;
+  }
 
   client.println( "500 Command line too long");
   return false;
