@@ -269,7 +269,7 @@ boolean FtpServer::processCommand()
     if (data.connected()) data.stop();
     //dataServer.begin();
      //dataIp = Ethernet.localIP();    
-	dataIp = WiFi.localIP();	
+	dataIp = client.localIP();	
 	dataPort = FTP_DATA_PORT_PASV;
     //data.connect( dataIp, dataPort );
     //data = dataServer.available();
