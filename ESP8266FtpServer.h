@@ -32,6 +32,7 @@
 #define FTP_SERVERESP_H
 
 //#include "Streaming.h"
+#define FS_NO_GLOBALS
 #include <FS.h>
 #include <WiFiClient.h>
 
@@ -44,7 +45,7 @@
 #define FTP_CMD_SIZE 255 + 8 // max size of a command
 #define FTP_CWD_SIZE 255 + 8 // max size of a directory name
 #define FTP_FIL_SIZE 255     // max size of a file name
-#define FTP_BUF_SIZE 1024 //512   // size of file buffer for read/write
+#define FTP_BUF_SIZE 2*1460 //512   // size of file buffer for read/write
 
 class FtpServer
 {
@@ -75,7 +76,7 @@ private:
   WiFiClient client;
   WiFiClient data;
   
-  File file;
+  fs::File file;
   
   boolean  dataPassiveConn;
   uint16_t dataPort;
